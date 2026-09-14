@@ -78,4 +78,5 @@ python internship_tracker.py
 Saranya Sai Bonangi
 
 B.Tech CSE Student
+
 Aspiring Software Developer
