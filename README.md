@@ -75,6 +75,7 @@ python internship_tracker.py
 
 ## Author
 
-Saranya Sai
+Saranya Sai Bonangi
 
 B.Tech CSE Student
+Aspiring Software Developer
