@@ -16,6 +16,8 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+/* ---------- APP BACKGROUND ---------- */
+
 .stApp {
     background:
         radial-gradient(circle at top left, #fbcfe8 0%, transparent 25%),
@@ -31,14 +33,30 @@ st.markdown("""
     color: #1f2937;
 }
 
+/* ---------- HEADINGS ---------- */
+
 h1, h2, h3 {
     color: #2d1b69 !important;
     font-weight: 700;
 }
 
-p, label, div, span {
+/* ---------- TEXT ---------- */
+
+p, label, span {
     color: #1f2937 !important;
 }
+
+/* ---------- SIDEBAR ---------- */
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(
+        180deg,
+        #e9d5ff,
+        #ddd6fe
+    );
+}
+
+/* ---------- METRICS ---------- */
 
 [data-testid="stMetric"] {
     background: linear-gradient(
@@ -58,6 +76,8 @@ p, label, div, span {
     font-weight: 600 !important;
 }
 
+/* ---------- BUTTONS ---------- */
+
 .stButton button {
     background: linear-gradient(
         135deg,
@@ -68,7 +88,6 @@ p, label, div, span {
     border-radius: 14px;
     border: none;
     font-weight: 700;
-    transition: 0.3s;
     box-shadow: 0px 4px 12px rgba(167,139,250,0.35);
 }
 
@@ -77,42 +96,53 @@ p, label, div, span {
     box-shadow: 0px 8px 20px rgba(167,139,250,0.45);
 }
 
-section[data-testid="stSidebar"] {
-    background: linear-gradient(
-        180deg,
-        #e9d5ff,
-        #ddd6fe
-    );
-}
+/* ---------- INPUT BOXES ---------- */
 
 .stTextInput input,
-.stNumberInput input {
-    background-color: white;
-    border: 2px solid #ddd6fe;
-    border-radius: 14px;
-    padding: 10px;
+.stNumberInput input,
+textarea,
+input {
+    background-color: white !important;
+    color: black !important;
+    -webkit-text-fill-color: black !important;
+    border: 2px solid #ddd6fe !important;
+    border-radius: 14px !important;
+    padding: 10px !important;
 }
+
+/* ---------- INPUT FOCUS ---------- */
 
 .stTextInput input:focus,
-.stNumberInput input:focus {
-    border-color: #a78bfa;
+.stNumberInput input:focus,
+textarea:focus {
+    border-color: #a78bfa !important;
 }
 
+/* ---------- DROPDOWNS ---------- */
+
 div[data-baseweb="select"] {
-    background-color: white;
-    border-radius: 14px;
+    background-color: white !important;
+    border: 2px solid #ddd6fe !important;
+    border-radius: 14px !important;
 }
+
+/* ---------- DROPDOWN TEXT ---------- */
+
+/* ---------- LABELS ---------- */
+
+.stTextInput label,
+.stNumberInput label,
+.stSelectbox label {
+    color: #1f2937 !important;
+    font-weight: 600;
+}
+
+/* ---------- DATAFRAME ---------- */
+
 [data-testid="stDataFrame"] {
     border-radius: 18px;
     overflow: hidden;
     box-shadow: 0px 6px 16px rgba(0,0,0,0.08);
-}
-.stTextInput input,
-.stNumberInput input {
-    background-color: white;
-    border: 2px solid #ddd6fe;
-    border-radius: 14px;
-    padding: 10px;
 }
 
 </style>
@@ -210,7 +240,10 @@ df = pd.DataFrame(
         "Status"
     ]
 )
-
+st.dataframe(
+    df,
+    width="stretch"
+)
 
 # ---------------- STATISTICS ----------------
 
@@ -365,7 +398,6 @@ if st.button("Update Status"):
 
     st.rerun()
 
-# ---------------- DELETE ----------------
 
 # ---------------- DELETE ----------------
 
@@ -375,21 +407,33 @@ delete_id = st.number_input(
     "Enter Application ID to Delete",
     min_value=1,
     step=1,
-    key="delete_id"
+    key="delete_id_input"
 )
 
-if st.button("Delete Application"):
+if st.button("Delete Application", key="delete_btn"):
 
     cursor.execute(
-        "DELETE FROM applications WHERE id = ?",
+        "SELECT * FROM applications WHERE id = ?",
         (int(delete_id),)
     )
 
-    conn.commit()
+    record = cursor.fetchone()
 
-    st.success("Application Deleted Successfully!")
+    if record:
 
-    st.rerun()
+        cursor.execute(
+            "DELETE FROM applications WHERE id = ?",
+            (int(delete_id),)
+        )
+
+        conn.commit()
+
+        st.success("Application Deleted Successfully!")
+
+        st.rerun()
+
+    else:
+        st.error("Application ID not found.")
 # ---------------- EXPORT CSV ----------------
 
 st.subheader("📥 Export Applications")
