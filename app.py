@@ -142,9 +142,20 @@ Track and manage all your internship applications in one place.
 """, unsafe_allow_html=True)
 
 # ---------------- DATABASE ----------------
-
-conn = sqlite3.connect("internships.db")
+conn = sqlite3.connect("internships.db", check_same_thread=False)
 cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS applications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    company TEXT,
+    role TEXT,
+    status TEXT
+)
+""")
+
+conn.commit()
+
 
 # ---------------- ADD APPLICATION ----------------
 
@@ -200,10 +211,6 @@ df = pd.DataFrame(
     ]
 )
 
-st.dataframe(
-    df,
-    use_container_width=True
-)
 
 # ---------------- STATISTICS ----------------
 
@@ -320,10 +327,9 @@ if search_company:
         )
 
         st.dataframe(
-            search_df,
-            use_container_width=True
-        )
-
+    search_df,
+    width="stretch"
+)
     else:
         st.warning("No applications found.")
 
